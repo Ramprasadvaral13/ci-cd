@@ -33,7 +33,7 @@ pipeline {
             steps {
                 script {
                     docker.withRegistry('https://index.docker.io/v1/', "docker-cred") {
-                        dockerImage.push()
+                        dockerImage.push(ramprasadv7/cal-e2e:${BUILD_NUMBER})
                     }
                 }
             }
