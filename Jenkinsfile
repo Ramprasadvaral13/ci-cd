@@ -1,41 +1,42 @@
 pipeline {
-    agent any
-
+    agent any 
+    
+    environment {
+        IMAGE_TAG = "${BUILD_NUMBER}"
+        credentials = 'git-cred'
+    }
+    
     stages {
+        
         stage('Checkout') {
-            steps {
-                // Check out source code from Git repository
-                git 'https://github.com/Ramprasadvaral13/ci-cd'
-            }
+           steps {
+                git credentialsId: 'git-cred', 
+                url: 'github.com/Ramprasadvaral13/ci-cd',
+                branch: 'main'
+           }
         }
 
-        stage('Build Docker Image') {
+        stage('Build Docker') {
             steps {
-                // Build Docker image
                 script {
-                    docker.build('ramprasadv7/flaskcalculator:latest')
+                    sh '''
+                    echo 'Build Docker Image'
+                    docker build -t ramprasadv7/cal-e2e:${BUILD_NUMBER} .
+                    '''
                 }
             }
         }
 
-        stage('Push Docker Image') {
-            steps {
-                // Push Docker image to Docker registry
+        stage('Push the artifacts') {
+           steps {
                 script {
-                    docker.withRegistry('https://hub.docker.com', 'docker-cred') {
-                        dockerImage.push('ramprasadv7/flaskcalculator:latest')
-                    }
+                    sh '''
+                    echo 'Push to Repo'
+                    docker push ramprasadv7/cal-e2e:${BUILD_NUMBER}
+                    '''
                 }
-            }
-        }
-
-        stage('Static Code Analysis') {
-            steps {
-                // Install necessary dependencies
-                sh 'pip install pylint'
-
-                // Run static code analysis
-                sh 'pylint ci-cd/app.py'
             }
         }
     }
+}
+
