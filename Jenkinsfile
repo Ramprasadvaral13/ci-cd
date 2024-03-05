@@ -3,7 +3,7 @@ pipeline {
     
     environment {
         IMAGE_TAG = "${BUILD_NUMBER}"
-        credentials = "git-hub"
+        SONAR_URL = "http://54.85.200.200/:9000"
     }
     
     stages {
@@ -22,6 +22,23 @@ pipeline {
                     echo 'Build Docker Image'
                     docker build -t ramprasadv7/cal-e2e:${IMAGE_TAG} .
                     '''
+                }
+            }
+        }
+
+        stage('Static Code Analysis') {
+            environment {
+                SONAR_AUTH_TOKEN = credentials('sonarqube')
+            }
+            steps {
+                script {
+                    withSonarQubeEnv('SonarQube') {
+                        sh '''
+                        sonar-scanner \
+                        -Dsonar.host.url=${SONAR_URL} \
+                        -Dsonar.login=${SONAR_AUTH_TOKEN}
+                        '''
+                    }
                 }
             }
         }
