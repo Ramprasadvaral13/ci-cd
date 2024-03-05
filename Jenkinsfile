@@ -3,7 +3,6 @@ pipeline {
     
     environment {
         IMAGE_TAG = "${BUILD_NUMBER}"
-        credentials = 'git-cred'
     }
     
     stages {
@@ -14,22 +13,26 @@ pipeline {
                 branch: 'main'
             }
         }
+
         stage('Build Docker') {
             steps {
                 script {
-                    dockerImage = docker.build("ramprasadv7/cal-e2e:${BUILD_NUMBER}", ".")
+                    sh '''
+                    echo 'Build Docker Image'
+                    docker build -t ramprasadv7/cal-e2e:${IMAGE_TAG} .
+                    '''
                 }
             }
         }
 
         stage('Push Docker Image') {
             environment {
-                REGISTRY_CREDENTIALS = credentials('docker-cred')
+                DOCKER_CREDENTIALS = credentials('docker-cred')
             }
             steps {
                 script {
-                    docker.withRegistry('https://index.docker.io/v1/', "docker-cred") {
-                        dockerImage.push("ramprasadv7/cal-e2e:${BUILD_NUMBER}")
+                    withDockerRegistry([credentialsId: 'docker-cred', url: "https://index.docker.io/v1/"]) {
+                        docker.image("ramprasadv7/cal-e2e:${IMAGE_TAG}").push()
                     }
                 }
             }
