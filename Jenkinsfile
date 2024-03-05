@@ -15,10 +15,17 @@ pipeline {
             }
         }
 
-        stage('Code Analysis') {
+        stage('Setup') {
             steps {
                 script {
                     sh 'pip install flake8 pylint mypy'
+                }
+            }
+        }
+
+        stage('Code Analysis') {
+            steps {
+                script {
                     sh 'flake8 app.py'
                     sh 'pylint app.py'
                     sh 'mypy app.py'
@@ -48,3 +55,4 @@ pipeline {
         }
     }
 }
+
