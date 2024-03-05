@@ -37,7 +37,7 @@ pipeline {
                         sonar-scanner \
                         -Dsonar.host.url=${SONAR_URL} \
                         -Dsonar.login=${SONAR_AUTH_TOKEN}
-                        -Dsonar.sources=src/main/app.py
+                        
                         '''
                     }
                 }
