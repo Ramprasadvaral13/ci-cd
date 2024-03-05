@@ -27,16 +27,17 @@ pipeline {
             }
         }
 
-        stage('Push the artifacts') {
-           steps {
-                script {
-                    sh '''
-                    echo 'Push to Repo'
-                    docker push ramprasadv7/cal-e2e:${BUILD_NUMBER}
-                    '''
-                }
+        stage('Push Docker Image') {
+      environment {
+        REGISTRY_CREDENTIALS = credentials('docker-cred')
+      }
+      steps {
+        script {
+            docker.withRegistry('https://index.docker.io/v1/', "docker-cred") {
+                dockerImage.push()
             }
         }
+      }
     }
 }
 
