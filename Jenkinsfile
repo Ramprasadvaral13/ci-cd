@@ -3,7 +3,7 @@ pipeline {
     
     environment {
         IMAGE_TAG = "${BUILD_NUMBER}"
-        SONAR_URL = "http://54.85.200.200/:9000"
+        SONAR_URL = "http://54.85.200.200:9000"
     }
     
     stages {
