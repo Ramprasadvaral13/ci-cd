@@ -7,13 +7,12 @@ pipeline {
     }
     
     stages {
-        
         stage('Checkout') {
-           steps {
+            steps {
                 git credentialsId: 'credentials', 
                 url: 'https://github.com/Ramprasadvaral13/ci-cd',
                 branch: 'main'
-           }
+            }
         }
 
         stage('Build Docker') {
@@ -28,16 +27,16 @@ pipeline {
         }
 
         stage('Push Docker Image') {
-      environment {
-        REGISTRY_CREDENTIALS = credentials('docker-cred')
-      }
-      steps {
-        script {
-            docker.withRegistry('https://index.docker.io/v1/', "docker-cred") {
-                dockerImage.push()
+            environment {
+                REGISTRY_CREDENTIALS = credentials('docker-cred')
+            }
+            steps {
+                script {
+                    docker.withRegistry('https://index.docker.io/v1/', "docker-cred") {
+                        dockerImage.push()
+                    }
+                }
             }
         }
-      }
     }
 }
-
