@@ -3,6 +3,7 @@ pipeline {
     
     environment {
         IMAGE_TAG = "${BUILD_NUMBER}"
+        credentials = "git-hub"
     }
     
     stages {
