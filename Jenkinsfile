@@ -15,18 +15,10 @@ pipeline {
             }
         }
 
-        stage('Setup') {
-            steps {
-                script {
-                    sh 'pip install pylint'
-                }
-            }
-        }
-
         stage('Code Analysis') {
             steps {
                 script {
-                    sh 'pylint app.py'
+                    sh 'pytest app.py'
                 }
             }
         }
