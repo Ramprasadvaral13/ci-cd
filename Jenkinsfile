@@ -14,7 +14,13 @@ pipeline {
                 branch: 'main'
             }
         }
-
+        stage('Setup') {
+            steps {
+                script {
+                    sh 'pip install pytest'
+                }
+            }
+        }
         stage('Code Analysis') {
             steps {
                 script {
