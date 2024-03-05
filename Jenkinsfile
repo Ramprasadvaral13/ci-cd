@@ -3,6 +3,7 @@ pipeline {
     
     environment {
         IMAGE_TAG = "${BUILD_NUMBER}"
+        credentials = 'git-cred'
     }
     
     stages {
@@ -14,25 +15,33 @@ pipeline {
             }
         }
 
+        stage('Code Analysis') {
+            steps {
+                script {
+                    sh 'pip install flake8 pylint mypy'
+                    sh 'flake8 app.py'
+                    sh 'pylint app.py'
+                    sh 'mypy app.py'
+                }
+            }
+        }
+
         stage('Build Docker') {
             steps {
                 script {
-                    sh '''
-                    echo 'Build Docker Image'
-                    docker build -t ramprasadv7/cal-e2e:${IMAGE_TAG} .
-                    '''
+                    dockerImage = docker.build("ramprasadv7/cal-e2e:${BUILD_NUMBER}", ".")
                 }
             }
         }
 
         stage('Push Docker Image') {
             environment {
-                DOCKER_CREDENTIALS = credentials('docker-cred')
+                REGISTRY_CREDENTIALS = credentials('docker-cred')
             }
             steps {
                 script {
-                    withDockerRegistry([credentialsId: 'docker-cred', url: "https://index.docker.io/v1/"]) {
-                        docker.image("ramprasadv7/cal-e2e:${IMAGE_TAG}").push()
+                    docker.withRegistry('https://index.docker.io/v1/', "docker-cred") {
+                        dockerImage.push("ramprasadv7/cal-e2e:${BUILD_NUMBER}")
                     }
                 }
             }
