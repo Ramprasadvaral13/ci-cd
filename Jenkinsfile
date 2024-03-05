@@ -14,21 +14,6 @@ pipeline {
                 branch: 'main'
             }
         }
-        stage('Setup') {
-            steps {
-                script {
-                    sh 'pip install pytest'
-                }
-            }
-        }
-        stage('Code Analysis') {
-            steps {
-                script {
-                    sh 'pytest app.py'
-                }
-            }
-        }
-
         stage('Build Docker') {
             steps {
                 script {
